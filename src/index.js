@@ -9,6 +9,7 @@ module.exports = {
      * const express = require('express');
      */
     inject: () => {
+        const Layer = require('express/lib/router/layer');
         const wrapper = (fn) => ((req, res, next) => {
             try {
                 Promise.resolve(fn(req,res,next)).catch(err => next(err));
@@ -16,7 +17,7 @@ module.exports = {
                 next(error)
             }
         });
-        Object.defineProperty(require('express/lib/router/layer').prototype, "handle", {
+        Object.defineProperty(Layer.prototype, "handle", {
             enumerable: true,
             get: function () {
                 return this.__handle;
