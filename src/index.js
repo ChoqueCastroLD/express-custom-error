@@ -55,22 +55,16 @@ module.exports = {
      * // the rest of your code
      */
     inject: () => {
-        const layer = require('express/lib/router/layer');
-
-        Object.defineProperty(layer.prototype, "handle", {
+        const wrapper = (fn) => ((req, res, next) => Promise.resolve(fn(req,res,next)).catch(err => next(err)));
+        Object.defineProperty(require('express/lib/router/layer').prototype, "handle", {
             enumerable: true,
-            get: () => this.__handle,
-            set: (middleware) => {
-                if (middleware.length < 4)
-                    middleware = (req, res, next) => {
-                        try {
-                            middleware(req, res, next).catch(err => next(err));
-                        } catch (err) {
-                            next(err);
-                        }
-                    }
-                this.__handle = middleware;
+            get: function () {
+                return this.__handle;
+            },
+            set: function (m) {
+                if (m.length != 4) this.__handle = wrapper(m);
+                else this.__handle = m;
             }
-        })
+        });
     }
 }
