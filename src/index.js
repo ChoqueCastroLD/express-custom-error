@@ -12,7 +12,7 @@ module.exports = {
         const Layer = require('express/lib/router/layer');
         const wrapper = (fn) => ((req, res, next) => {
             try {
-                Promise.resolve(fn(req,res,next)).catch(err => next(err));
+                Promise.resolve(fn(req, res, next)).catch(err => next(err));
             } catch (error) {
                 next(error)
             }
@@ -27,5 +27,33 @@ module.exports = {
                 else this.__handle = m;
             }
         });
+    },
+    /** Example Midleware that handle various errors */
+    errorHandler: (err, req, res, next) => {
+        if (err) {
+            let message = 'An error ocurred, try again later';
+
+            if (typeof err === 'string') {
+                message = err;
+            } else {
+                if (err.message) {
+                    message = err.message;
+                } else {
+                    if (err.json) {
+                        if (err.json.message) {
+                            message = err.json.message;
+                        }
+                    }
+                }
+            }
+
+            res.status(err.code || 500)
+                .json({
+                    status: false,
+                    message
+                });
+        } else {
+            next();
+        }
     }
 }
