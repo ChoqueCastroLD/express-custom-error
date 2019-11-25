@@ -29,25 +29,24 @@ module.exports = {
         });
     },
     /** Example Midleware that handle various errors */
-    errorHandler: (err, req, res, next) => {
+    errorHandler: () => (err, req, res, next) => {
         if (err) {
             let message = 'An error ocurred, try again later';
+            
+            try {
+                message = err.message;
+            } catch (error) {}
+            
+            try {
+                message = err.json.message;
+            } catch (error) {}
+                    
 
-            if (typeof err === 'string') {
+            if (typeof err === 'string')
                 message = err;
-            } else {
-                if (err.message) {
-                    message = err.message;
-                } else {
-                    if (err.json) {
-                        if (err.json.message) {
-                            message = err.json.message;
-                        }
-                    }
-                }
-            }
 
-            res.status(err.code || 500)
+            res
+                .status(err.code || 500)
                 .json({
                     status: false,
                     message

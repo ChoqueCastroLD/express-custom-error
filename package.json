@@ -1,6 +1,6 @@
 {
   "name": "express-custom-error",
-  "version": "1.8.6",
+  "version": "1.8.7",
   "description": "A nodejs module that hacks into express in order to add custom error handling support",
   "main": "src/index.js",
   "scripts": {},
