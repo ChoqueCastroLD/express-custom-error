@@ -45,10 +45,21 @@ module.exports = {
                 err.code = err.code;
             } catch (error) {}
 
+            try {
+                if (err.sqlState) {
+                    if (err.fatal === true) {
+                        message = "Database didnt repond correctly, contact server administrator";
+                        console.log(err);
+                    } else {
+                        message = err.sqlMessage;
+                    }
+                }
+            } catch (error) {}
+
             if (typeof err === 'string')
                 message = err;
 
-            if(err.code >= 100 && error.code <= 600)
+            if (err.code >= 100 && err.code <= 600)
                 err.code = err.code;
             else
                 err.code = 400;
