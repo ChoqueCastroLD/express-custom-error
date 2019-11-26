@@ -24,50 +24,37 @@ const express = require('express');
 ## Example
 
 ````javascript
-// index.js
-require('express-custom-error').inject();
-// You only do this in the main file and once!
-// Then you do your code same as usual
+// Inject express custom error into express with the inject method
+const { inject, errorHandler } = require('express-custom-error');
+inject();
+
 const express = require('express');
 const app = express();
-// .... lots of code and routes
-app.get('/dog/:id', async (req, res) => {
+
+app.get('/error', async (req, res) => {
      
-     if (!req.params.id)
-         throw {code: 400, message: 'You must specify id in the url params'}; // This is how you throw errors
-
-     let dog = dogModel.getById(req.params.id);
-
-     res.json({status: true, data: dog});
+     throw {code: 400, message: 'I dont like you'}; // This is how you throw custom errors
+    
+     res.json({status: true, data: ['Pablo', 'Perry', 'Jana']]}); // This will not be executed
 })
-// ..... another lots of code and routes
-// In order to handle errors do like this
-// Make sure to put this error handler after every other route
+
+// In order to handle errors, you can use the express way of doing it
+
 app.use((err, req, res, next) => {
-     // Check if there's an error! (it might not be one)
-     if(err){
-         // Check if its NOT a custom error
-         if(err instanceof Error){
-             console.log("Someone had a internal server error!!!", err);
-             res.status(500).json({
-                 status: false,
-                 message: 'Something went wrong, blame the programmer'
-             });
-         } else { //otherwise it IS a custom error
-             res.status(err.code).json({
-                 status: false,
-                 message: err.message
-             })
-         }
-     }
-})
+    if(err)
+        console.log("error: ", err);
+    next();
+});
+
+// Or you might want to use the built in error handler middleware
+
+app.use( errorHandler() ); // If no error is found it will call the next middleware
 
 // Then you might want to handle not found routes
 app.use('*', (req, res) => {
- res.status(404).json({
-     status: false,
-     message: 'Route not found'
- })
+ res
+ .status(404) // 404 = resource not found
+ .json({ status: false, message: 'Route not found' }); // Json response
 })
 
 app.listen(3000);

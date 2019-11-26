@@ -49,7 +49,7 @@ module.exports = {
                 if (err.sqlState) {
                     if (err.fatal === true) {
                         message = "Database didnt repond correctly, contact server administrator";
-                        console.log(err);
+                        console.error(err);
                     } else {
                         message = err.sqlMessage;
                     }
