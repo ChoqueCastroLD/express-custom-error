@@ -38,15 +38,7 @@ app.get('/error', async (req, res) => {
      res.json({status: true, data: ['Pablo', 'Perry', 'Jana']]}); // This will not be executed
 })
 
-// In order to handle errors, you can use the express way of doing it
-
-app.use((err, req, res, next) => {
-    if(err)
-        console.log("error: ", err);
-    next();
-});
-
-// Or you might want to use the built in error handler middleware
+// In order to handle errors, you can use the built in error handler middleware
 
 app.use( errorHandler() ); // If no error is found it will call the next middleware
 
