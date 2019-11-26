@@ -32,18 +32,26 @@ module.exports = {
     errorHandler: () => (err, req, res, next) => {
         if (err) {
             let message = 'An error ocurred, try again later';
-            
+
             try {
                 message = err.message;
             } catch (error) {}
-            
+
             try {
                 message = err.json.message;
             } catch (error) {}
-                    
+
+            try {
+                err.code = err.code;
+            } catch (error) {}
 
             if (typeof err === 'string')
                 message = err;
+
+            if(err.code >= 100 && error.code <= 600)
+                err.code = err.code;
+            else
+                err.code = 400;
 
             res
                 .status(err.code || 500)
