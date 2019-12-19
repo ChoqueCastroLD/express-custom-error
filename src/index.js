@@ -65,7 +65,7 @@ module.exports = {
                 err.code = 400;
 
             res
-                .status(err.code || 500)
+                .status(err.code || 400)
                 .json({
                     status: false,
                     message
